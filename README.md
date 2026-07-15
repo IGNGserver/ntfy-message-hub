@@ -1,61 +1,70 @@
 # 讯笺
 
-讯笺是一个 ntfy 消息归档与浏览系统，包含消息采集服务、Web 站点和 Android 应用。它订阅配置的话题，将消息按话题和记录用户写入 MySQL。服务只记录 ntfy 消息文本和元数据，不下载、不保存附件内容，也会从原始 JSON 中剔除 `attachment` 字段。
+把散落在 ntfy 里的通知，收进一处安静、清晰的消息空间。
 
-当前版本：`1.0.0`。站点和 Android 应用共用根目录 `VERSION` 文件，每次用户可见更新都应同步修改该文件。
+讯笺会持续收集你关注的话题消息，帮你按频道、标签和关键词整理记录。你可以在浏览器里查阅，也可以用 Android 应用随时打开最近的消息。
 
-## 目录
+## 你可以用讯笺做什么
 
-- `src/ntfy_store/`：Python 常驻订阅服务
-- `sql/schema.sql`：MySQL 表结构
-- `deploy/ntfy-message-store.service`：systemd 单元模板
-- `deploy/install_remote.sh`：部署到 Ubuntu 目标机的脚本
+- 把多个 ntfy 话题汇总到一个站点和一个应用里
+- 按时间浏览消息，也可以按标题分组查看
+- 用频道、标签和关键词快速找到旧消息
+- 打开消息详情，查看正文、标签、来源和原始 JSON
+- 在 Android 端缓存消息，网络暂时不可用时继续查看已有记录
+- 只保存消息文本和元数据，不下载或保存附件内容
 
-## 本地配置示例
+## 开始使用
 
-复制 `.env.example` 为 `.env` 后修改：
+### 使用 Android 应用
+
+从 [v1.0.0 Release](https://github.com/IGNGserver/ntfy-message-hub/releases/tag/v1.0.0) 下载 `xunjian-1.0.0-release.apk`，安装后填写你的讯笺站点地址和访问密钥即可使用。
+
+### 使用 Web 站点
+
+讯笺站点需要连接 MySQL，并通过环境变量连接 ntfy。先复制配置示例：
 
 ```bash
-cp .env.example .env
+cp web/.env.example web/.env
 ```
 
-关键配置：
+然后填写以下信息：
 
-- `NTFY_BASE_URL`：ntfy 服务地址，例如 `https://example.com`
-- `NTFY_TOPICS`：逗号分隔的话题列表，默认 `reports,messages`
-- `NTFY_TOKEN`：Bearer token
-- `RECORDER_USER`：这套存储系统的记录用户标识
+- `NTFY_BASE_URL`：你的 ntfy 服务地址
+- `NTFY_TOPICS`：要收集的话题，多个话题用逗号分隔
+- `NTFY_TOKEN`：访问 ntfy 所需的 Bearer token
+- `ACCESS_KEY`：登录讯笺站点时使用的访问密钥
 - `MYSQL_*`：MySQL 连接信息
 
-## 运行
+本地运行 Web 站点：
 
 ```bash
-python3 -m venv .venv
-. .venv/bin/activate
-pip install -r requirements.txt
-python -m ntfy_store
+cd web
+npm install
+npm run dev
 ```
 
-## 远端部署
+浏览器打开终端显示的本地地址即可。
 
-部署脚本只接受通过环境变量传入的主机、账号和凭据，仓库不保存任何个人部署信息。
+## 数据与隐私
 
-请先通过环境变量提供目标机和凭据，再执行：
+讯笺的公开仓库不包含任何个人站点地址、账号、密码或访问令牌。请把自己的配置保存在 `.env` 文件中，不要提交到 Git。
 
-```bash
-./deploy/install_remote.sh
+默认情况下，讯笺保存消息正文和必要的消息元数据；消息中的 `attachment` 字段会被剔除，附件本身不会被下载。
+
+## 给开发者
+
+项目由三个部分组成：
+
+- `web/`：Web 站点和消息采集服务
+- `android/`：Jetpack Compose Android 应用
+- `sql/`：MySQL 表结构
+
+根目录的 `VERSION` 是站点和 Android 应用共用的版本源。每次发布用户可见更新时，请修改它，并使用对应的 `v<version>` Git tag 创建 Release。
+
+提交前运行公开仓库审计：
+
+```powershell
+pwsh -File scripts/audit-public.ps1
 ```
 
-脚本会在远端创建：
-
-- MySQL 数据库：`ntfy_message_store`
-- MySQL 用户：`ntfy_store`
-- 应用目录：`/opt/ntfy-message-store`
-- 配置文件：`/etc/ntfy-message-store.env`
-- systemd 服务：`ntfy-message-store.service`
-
-部署后查看状态：
-
-```bash
-ssh <remote-user>@<remote-host> 'systemctl status ntfy-message-store --no-pager'
-```
+当前版本：`1.0.0`
