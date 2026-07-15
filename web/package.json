@@ -1,0 +1,25 @@
+{
+  "name": "ntfy-message-hub",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "NODE_ENV=production node server.mjs",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "mysql2": "^3.11.5",
+    "next": "16.0.10",
+    "react": "19.2.1",
+    "react-dom": "19.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "eslint": "^9.17.0",
+    "eslint-config-next": "16.0.10",
+    "typescript": "^5.7.2"
+  }
+}

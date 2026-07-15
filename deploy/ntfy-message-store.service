@@ -1,0 +1,23 @@
+[Unit]
+Description=ntfy message store
+After=network-online.target mysql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ntfy-store
+Group=ntfy-store
+WorkingDirectory=/opt/ntfy-message-store
+EnvironmentFile=/etc/ntfy-message-store.env
+Environment=PYTHONPATH=/opt/ntfy-message-store/src
+ExecStart=/opt/ntfy-message-store/.venv/bin/python -m ntfy_store
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/ntfy-message-store
+
+[Install]
+WantedBy=multi-user.target

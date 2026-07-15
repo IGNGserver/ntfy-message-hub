@@ -1,0 +1,22 @@
+[Unit]
+Description=ntfy message hub
+After=network-online.target mysql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ntfy-hub
+Group=ntfy-hub
+WorkingDirectory=/opt/ntfy-message-hub
+EnvironmentFile=/etc/ntfy-message-hub.env
+ExecStart=/usr/bin/npm run start
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/ntfy-message-hub
+
+[Install]
+WantedBy=multi-user.target

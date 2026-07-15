@@ -1,0 +1,35 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+AGENTS.md
+
+# Runtime, build, and test output
+__pycache__/
+*.py[cod]
+.venv/
+*.log
+*.db
+artifacts/
+web/.next/
+web/node_modules/
+web/dist/
+android/.gradle/
+android/.kotlin/
+android/build/
+android/app/build/
+android/local.properties
+android/gradle-8.10.2/
+
+# Local signing material
+*.jks
+*.keystore
+*.p12
+keystore.properties
+
+# IDE and OS files
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
