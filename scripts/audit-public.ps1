@@ -9,11 +9,17 @@ $files = Get-ChildItem -LiteralPath $root -Recurse -File -Force | Where-Object {
 
 $patterns = @(
   'tk_[A-Za-z0-9]{20,}',
-  'https?://(?:[A-Za-z0-9-]+\.)*(?:lvziwang\.top|lvziw\.top)',
   '(?-i)(?:REMOTE_PASSWORD|MYSQL_PASSWORD|ACCESS_KEY)\s*=\s*(["'']?)(?!replace-with|\$|<)[^"''\s#]+',
   '(?i)(?:192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3})',
   '(?i)(?:/home/|C:\\Users\\)[A-Za-z0-9._-]+'
 )
+
+# Private-domain patterns live outside the repository: keep them in
+# scripts/audit-private-patterns.txt (gitignored), one regex per line.
+$domainFile = Join-Path $PSScriptRoot 'audit-private-patterns.txt'
+if (Test-Path -LiteralPath $domainFile) {
+  $patterns += Get-Content -LiteralPath $domainFile | Where-Object { $_.Trim() -and -not $_.StartsWith('#') }
+}
 
 $matches = foreach ($file in $files) {
   Select-String -LiteralPath $file.FullName -Pattern $patterns -AllMatches -ErrorAction SilentlyContinue

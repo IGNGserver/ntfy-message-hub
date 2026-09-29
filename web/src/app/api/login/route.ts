@@ -16,7 +16,8 @@ export async function POST(request: NextRequest) {
     value: expectedSession(),
     httpOnly: true,
     sameSite: "lax",
-    secure: false,
+    // Secure by default; set SESSION_COOKIE_SECURE=false only for deliberate plain-HTTP LAN deployments.
+    secure: (process.env.SESSION_COOKIE_SECURE ?? "true") !== "false",
     path: "/",
     maxAge: 60 * 60 * 24 * 30
   });
